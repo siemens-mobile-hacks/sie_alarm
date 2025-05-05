@@ -162,7 +162,7 @@ static void GHook(GUI *gui, int cmd) {
 }
 
 static INPUTDIA_DESC INPUTDIA_D = {
-    1,
+    8,
     OnKey,
     GHook,
     NULL,
