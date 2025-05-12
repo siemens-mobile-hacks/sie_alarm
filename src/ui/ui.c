@@ -34,7 +34,7 @@ void UpdateTView(GUI *gui) {
     TViewSetText(gui, ws, malloc_adr(), mfree_adr());
 }
 
-void AutoUpdate(void *gui) {
+static void AutoUpdate(void *gui) {
     UI_DATA *data = TViewGetUserPointer(gui);
 
     UpdateTView(gui);
@@ -54,10 +54,12 @@ static int OnKey(GUI *gui, GUI_MSG *msg) {
 static void GHook(GUI *gui, int cmd) {
     UI_DATA *data = TViewGetUserPointer(gui);
 
-    if (cmd == TI_CMD_CREATE) {
+    if (cmd == TI_CMD_FOCUS) {
+        UpdateTView(gui);
         data->timer_update = GUI_NewTimer(gui);
         GUI_StartTimerProc(gui, data->timer_update, 1000, AutoUpdate);
-    } else if (cmd == TI_CMD_REDRAW) {
+    } else if (cmd == TI_CMD_UNFOCUS) {
+        GUI_DeleteTimer(gui, data->timer_update);
     } else if (cmd == TI_CMD_DESTROY) {
         GUI_DeleteTimer(gui, data->timer_update);
         mfree(data);

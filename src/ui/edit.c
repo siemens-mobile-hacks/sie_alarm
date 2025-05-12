@@ -8,7 +8,7 @@ typedef struct {
     ALARM alarm;
     GUI *main_gui;
     int cursor_days;
-    int timer_time_update;
+    int timer_update;
 } EDIT_DATA;
 
 extern HEADER_DESC HEADER_D;
@@ -22,15 +22,12 @@ static const SOFTKEYSTAB SOFTKEYS_TAB = {
     SOFTKEY_D, 0,
 };
 
-void UpdateTimeProc(void *gui) {
-    EDIT_DATA *data = EDIT_GetUserPointer(gui);
-
+void UpdateTime(void *gui) {
     WSHDR ws;
     uint16_t wsbody[32];
     CreateLocalWS(&ws, wsbody, 32);
     GetTime(&ws);
     EDIT_SetTextToEditControl(gui, 1, &ws);
-    GUI_StartTimerProc(gui, data->timer_time_update, 1000, UpdateTimeProc);
 }
 
 void UpdateAlarmState(void *gui) {
@@ -51,6 +48,13 @@ void UpdateDaysInUse(void *gui) {
     CreateLocalWS(&ws, wsbody, 32);
     GetDaysInUse(&ws, data->alarm.days, data->cursor_days);
     EDIT_SetTextToEditControl(gui, 6, &ws);
+}
+
+static void AutoUpdate(void *gui) {
+    EDIT_DATA *data = EDIT_GetUserPointer(gui);
+    UpdateTime(gui);
+    RefreshGUI();
+    GUI_StartTimerProc(gui, data->timer_update, 1000, AutoUpdate);
 }
 
 static int OnKey(GUI *gui, GUI_MSG *msg) {
@@ -148,15 +152,19 @@ static int OnKey(GUI *gui, GUI_MSG *msg) {
 static void GHook(GUI *gui, int cmd) {
     EDIT_DATA *data = EDIT_GetUserPointer(gui);
 
-    if (cmd == TI_CMD_CREATE) {
-        EDIT_SetFocus(gui, 3);
-        data->timer_time_update = GUI_NewTimer(gui);
-        GUI_StartTimerProc(gui, data->timer_time_update, 1000, UpdateTimeProc);
-    } else if (cmd == TI_CMD_REDRAW) {
+    if (cmd == TI_CMD_REDRAW) {
         SetSoftKey(gui, &SOFTKEY_D[0], SET_LEFT_SOFTKEY);
         SetSoftKey(gui, &SOFTKEY_D[1], SET_MIDDLE_SOFTKEY);
+    } else if (cmd == TI_CMD_CREATE) {
+        EDIT_SetFocus(gui, 3);
+    } else if (cmd == TI_CMD_FOCUS) {
+        UpdateTime(gui);
+        data->timer_update = GUI_NewTimer(gui);
+        GUI_StartTimerProc(gui, data->timer_update, 1000, AutoUpdate);
+    } else if (cmd == TI_CMD_UNFOCUS) {
+        GUI_DeleteTimer(gui, data->timer_update);
     } else if (cmd == TI_CMD_DESTROY) {
-        GUI_DeleteTimer(gui, data->timer_time_update);
+        GUI_DeleteTimer(gui, data->timer_update);
         mfree(data);
     }
 }
@@ -176,8 +184,6 @@ static INPUTDIA_DESC INPUTDIA_D = {
     { TEXT_ALIGNMIDDLE },
     { INPUTDIA_FLAGS_SWAP_SOFTKEYS },
 };
-
-#include <swilib/patch.h>
 
 int CreateInputTextDialog_Edit(GUI *main_gui) {
     UI_DATA *ui_data = TViewGetUserPointer(main_gui);
