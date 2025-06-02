@@ -72,7 +72,7 @@ static const struct {
 };
 
 void UpdateCSMname(void) {
-    wsprintf((WSHDR *)&MAINCSM.maincsm_name, "%t", "SieAlarm");
+    wsprintf((WSHDR *)&MAINCSM.maincsm_name, "%s", "Alarm clock");
 }
 
 int main() {
