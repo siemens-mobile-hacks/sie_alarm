@@ -34,7 +34,7 @@ void GetAlarmTime(WSHDR *ws, const TTime *time) {
     wstrcatprintf(ws, "%c%c%w%c%c", UTF16_ALIGN_CENTER, UTF16_FONT_MEDIUM, &ws_time, UTF16_FONT_RESET, UTF16_ALIGN_NONE);
 }
 
-void GetDays(WSHDR *ws) {
+void GetDays_ws(WSHDR *ws) {
     const char days[] = {'M', 'T', 'W', 'T', 'F', 'S', 'S'};
     wsAppendChar(ws, UTF16_ALIGN_LEFT);
     wsAppendChar(ws, UTF16_FONT_SMALL);

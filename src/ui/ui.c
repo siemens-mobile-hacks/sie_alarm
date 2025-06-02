@@ -29,7 +29,7 @@ void UpdateTView(GUI *gui) {
     GetAlarmState(ws, data->alarm->active);
     GetAlarmTime(ws, &(data->alarm->time));
     wsAppendChar(ws, '\n');
-    GetDays(ws);
+    GetDays_ws(ws);
     GetDaysInUse(ws, data->alarm->days, -1);
     TViewSetText(gui, ws, malloc_adr(), mfree_adr());
 }

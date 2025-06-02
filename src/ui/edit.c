@@ -224,7 +224,7 @@ int CreateInputTextDialog_Edit(GUI *main_gui) {
     AddEditControlToEditQend(eq, &ec, ma);
 
     CutWSTR(&ws, 0);
-    GetDays(&ws);
+    GetDays_ws(&ws);
     ConstructEditControl(&ec, ECT_READ_ONLY, ECF_NORMAL_STR, &ws, wstrlen(&ws));
     AddEditControlToEditQend(eq, &ec, ma);
 

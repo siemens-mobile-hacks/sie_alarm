@@ -12,7 +12,7 @@ typedef struct {
 const int minus11 = -11;
 unsigned short maincsm_name_body[140];
 
-static void CSM_OnCreate(CSM_RAM *data) {
+static void OnCreate(CSM_RAM *data) {
     MAIN_CSM *csm = (MAIN_CSM*)data;
 
     csm->alarm = ReadPDFile();
@@ -26,16 +26,16 @@ static void CSM_OnCreate(CSM_RAM *data) {
     csm->gui_id = CreateUI(csm->alarm);
 }
 
-static void CSM_OnClose(CSM_RAM *data) {
+static void OnClose(CSM_RAM *data) {
     MAIN_CSM *csm = (MAIN_CSM*)data;
 
     if (csm->alarm) {
         mfree(csm->alarm);
     }
-    SUBPROC((void *)kill_elf);
+    SUBPROC(kill_elf);
 }
 
-static int CSM_OnMessage(CSM_RAM *data, GBS_MSG *msg) {
+static int OnMessage(CSM_RAM *data, GBS_MSG *msg) {
     MAIN_CSM *csm = (MAIN_CSM*)data;
     if ((msg->msg == MSG_GUI_DESTROYED) && ((int)msg->data0 == csm->gui_id)) {
         csm->csm.state = -3;
@@ -48,15 +48,15 @@ static const struct {
     WSHDR maincsm_name;
 } MAINCSM = {
     {
-        CSM_OnMessage,
-        CSM_OnCreate,
+        OnMessage,
+        OnCreate,
 #ifdef NEWSGOLD
         0,
         0,
         0,
         0,
 #endif
-        CSM_OnClose,
+        OnClose,
         sizeof(MAIN_CSM),
         1,
         &minus11
