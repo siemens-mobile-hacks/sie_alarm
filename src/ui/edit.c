@@ -178,11 +178,11 @@ static INPUTDIA_DESC INPUTDIA_D = {
     &SOFTKEYS_TAB,
     {0, 0, 0, 0},
     FONT_SMALL,
-    100,
-    101,
+    0x64,
+    0x65,
     0,
-    { TEXT_ALIGNMIDDLE },
-    { INPUTDIA_FLAGS_SWAP_SOFTKEYS },
+    TEXT_ALIGNMIDDLE,
+    INPUTDIA_FLAGS_SWAP_SOFTKEYS,
 };
 
 int CreateInputTextDialog_Edit(GUI *main_gui) {
