@@ -9,7 +9,7 @@ int GetCBox(int flag) {
 }
 
 void GetAlarmState(WSHDR *ws, int active) {
-    const int icon = (active) ? 20001 : 20002;
+    const int icon = (active) ? 20020 : 20021;
     wstrcatprintf(ws, "%c%c%c%c%c", UTF16_ALIGN_CENTER, UTF16_FONT_SMALL,
                   GetUnicodeSymbolByDynIcon(icon), UTF16_FONT_RESET, UTF16_ALIGN_NONE);
 }

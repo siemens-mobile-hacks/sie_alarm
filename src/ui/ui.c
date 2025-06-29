@@ -55,12 +55,18 @@ static void GHook(GUI *gui, int cmd) {
     UI_DATA *data = TViewGetUserPointer(gui);
 
     if (cmd == TI_CMD_FOCUS) {
+        IMGHDR *img_alarm_on = GetPITaddr(3);
+        IMGHDR *img_alarm_off = GetPITaddr(2);
+        SetDynIcon(20020, img_alarm_on, (char*)img_alarm_on->bitmap);
+        SetDynIcon(20021, img_alarm_off, (char*)img_alarm_off->bitmap);
         UpdateTView(gui);
         data->timer_update = GUI_NewTimer(gui);
         GUI_StartTimerProc(gui, data->timer_update, 1000, AutoUpdate);
     } else if (cmd == TI_CMD_UNFOCUS) {
         GUI_DeleteTimer(gui, data->timer_update);
     } else if (cmd == TI_CMD_DESTROY) {
+        FreeDynIcon(20020);
+        FreeDynIcon(20021);
         GUI_DeleteTimer(gui, data->timer_update);
         mfree(data);
     }
@@ -98,14 +104,6 @@ int CreateUI(ALARM *alarm) {
     data->alarm = alarm;
     TViewSetUserPointer(gui, data);
     SetHeaderToMenu(gui, &HEADER_D, malloc_adr());
-
-    IMGHDR *img_alarm_on = GetPITaddr(3);
-    IMGHDR *img_alarm_off = GetPITaddr(2);
-    FreeDynIcon(20001);
-    FreeDynIcon(20002);
-    SetDynIcon(20001, img_alarm_on, (char*)img_alarm_on->bitmap);
-    SetDynIcon(20002, img_alarm_off, (char*)img_alarm_off->bitmap);
-    UpdateTView(gui);
 
     return CreateGUI(gui);
 }
